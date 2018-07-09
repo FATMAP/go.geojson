@@ -15,6 +15,7 @@ type FeatureCollection struct {
 	BoundingBox []float64              `json:"bbox,omitempty"`
 	Features    []*Feature             `json:"features"`
 	CRS         map[string]interface{} `json:"crs,omitempty"` // Coordinate Reference System Objects are not currently supported
+	Query       []string               `json:"query,omitempty"`
 }
 
 // NewFeatureCollection creates and initializes a new feature collection.
@@ -22,6 +23,7 @@ func NewFeatureCollection() *FeatureCollection {
 	return &FeatureCollection{
 		Type:     "FeatureCollection",
 		Features: make([]*Feature, 0),
+		Query:    make([]string, 0),
 	}
 }
 
@@ -52,6 +54,10 @@ func (fc FeatureCollection) MarshalJSON() ([]byte, error) {
 
 	if fc.CRS != nil && len(fc.CRS) != 0 {
 		fcol.CRS = fc.CRS
+	}
+
+	if fc.Query != nil && len(fc.Query) != 0 {
+		fcol.Query = fc.Query
 	}
 
 	return json.Marshal(fcol)

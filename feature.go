@@ -12,6 +12,12 @@ type Feature struct {
 	Geometry    *Geometry              `json:"geometry"`
 	Properties  map[string]interface{} `json:"properties"`
 	CRS         map[string]interface{} `json:"crs,omitempty"` // Coordinate Reference System Objects are not currently supported
+
+	// Carman support see: https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
+	Text      string        `json:"text,omitempty"`
+	PlaceName string        `json:"place_name,omitempty"`
+	PlaceType []string      `json:"place_type,omitempty"`
+	Context   []interface{} `json:"context,omitempty"`
 }
 
 // NewFeature creates and initializes a GeoJSON feature given the required attributes.
@@ -20,6 +26,8 @@ func NewFeature(geometry *Geometry) *Feature {
 		Type:       "Feature",
 		Geometry:   geometry,
 		Properties: make(map[string]interface{}),
+		PlaceType:  make([]string, 0),
+		Context:    make([]interface{}, 0),
 	}
 }
 
@@ -78,6 +86,15 @@ func (f Feature) MarshalJSON() ([]byte, error) {
 	}
 	if f.CRS != nil && len(f.CRS) != 0 {
 		fea.CRS = f.CRS
+	}
+	if f.Text != "" {
+		fea.Text = f.Text
+	}
+	if f.PlaceType != nil && len(f.PlaceType) != 0 {
+		fea.PlaceType = f.PlaceType
+	}
+	if f.Context != nil && len(f.Context) != 0 {
+		fea.Context = f.Context
 	}
 
 	return json.Marshal(fea)
